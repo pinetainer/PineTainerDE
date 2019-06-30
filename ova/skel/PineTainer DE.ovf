@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vbox="http://www.virtualbox.org/ovf/machine" xml:lang="es-ES">
+	<References>
+!FICHEROS_DISCOS!
+	</References>
+	<DiskSection>
+		<Info>Dispositivos de bloques</Info>
+!DISCOS!
+	</DiskSection>
+	<NetworkSection>
+		<Info>Red NAT</Info>
+		<Network ovf:name="nat"/>
+	</NetworkSection>
+	<DeploymentOptionSection>
+		<Info>Configuraciones de instalación</Info>
+		<Configuration ovf:id="minimal">
+			<Label>Mínimos recursos</Label>
+			<Description>Asigna al entorno de desarrollo de PineTainer 512 MiB de RAM y 1 núcleo de CPU, para que puedas usarlo en computadores de bajas prestaciones. Sin embargo, las compilaciones serán más lentas.</Description>
+		</Configuration>
+		<Configuration ovf:id="typical" ovf:default="true">
+			<Label>Configuración típica</Label>
+			<Description>Asigna al entorno de desarrollo de PineTainer 1,5 GiB de RAM y 4 núcleos de CPU, para que puedas usarlo en computadores de prestaciones normales.</Description>
+		</Configuration>
+		<Configuration ovf:id="maximal">
+			<Label>Máximos recursos</Label>
+			<Description>Asigna al entorno de desarrollo de PineTainer 2,5 GiB de RAM y 8 núcleos de CPU, para que puedas usarlo en computadores de altas prestaciones. Las compilaciones serán muy rápidas.</Description>
+		</Configuration>
+	</DeploymentOptionSection>
+	<VirtualSystem ovf:id="PineTainer DE">
+		<Info>Metadatos de la MV</Info>
+		<ProductSection ovf:class="io.github.pinetainer.developmentenvironment" ovf:instance="0">
+			<Info>Información de autoría de la MV</Info>
+			<Product>PineTainer DE</Product>
+			<Vendor>PineTainer</Vendor>
+			<Version>1.0</Version>
+			<ProductUrl>https://github.com/pinetainer/PineTainerDE</ProductUrl>
+			<VendorUrl>hhttps://github.com/pinetainer</VendorUrl>
+		</ProductSection>
+		<OperatingSystemSection ovf:id="96" ovf:version="9">
+			<Info>Debian 9.x 64-bit</Info>
+			<vbox:OSType ovf:required="false">Debian_64</vbox:OSType>
+		</OperatingSystemSection>
+		<VirtualHardwareSection>
+			<Info>Hardware virtual de la MV</Info>
+			<System>
+				<vssd:VirtualSystemType>vmx-10</vssd:VirtualSystemType>
+			</System>
+			<Item ovf:configuration="minimal">
+				<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+				<rasd:ElementName>512 MiB RAM</rasd:ElementName>
+				<rasd:InstanceID>2</rasd:InstanceID>
+				<rasd:ResourceType>4</rasd:ResourceType>
+				<rasd:VirtualQuantity>512</rasd:VirtualQuantity>
+			</Item>
+			<Item ovf:configuration="maximal">
+				<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+				<rasd:ElementName>2,5 GiB RAM</rasd:ElementName>
+				<rasd:InstanceID>2</rasd:InstanceID>
+				<rasd:ResourceType>4</rasd:ResourceType>
+				<rasd:VirtualQuantity>2560</rasd:VirtualQuantity>
+			</Item>
+			<Item ovf:configuration="typical">
+				<rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+				<rasd:ElementName>1,5 GiB RAM</rasd:ElementName>
+				<rasd:InstanceID>2</rasd:InstanceID>
+				<rasd:ResourceType>4</rasd:ResourceType>
+				<rasd:VirtualQuantity>1536</rasd:VirtualQuantity>
+			</Item>
+			<Item ovf:configuration="minimal">
+				<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+				<rasd:ElementName>1 CPU</rasd:ElementName>
+				<rasd:InstanceID>1</rasd:InstanceID>
+				<rasd:ResourceType>3</rasd:ResourceType>
+				<rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+			</Item>
+			<Item ovf:configuration="maximal">
+				<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+				<rasd:ElementName>8 CPU</rasd:ElementName>
+				<rasd:InstanceID>1</rasd:InstanceID>
+				<rasd:ResourceType>3</rasd:ResourceType>
+				<rasd:VirtualQuantity>8</rasd:VirtualQuantity>
+			</Item>
+			<Item ovf:configuration="typical">
+				<rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+				<rasd:ElementName>4 CPU</rasd:ElementName>
+				<rasd:InstanceID>1</rasd:InstanceID>
+				<rasd:ResourceType>3</rasd:ResourceType>
+				<rasd:VirtualQuantity>4</rasd:VirtualQuantity>
+			</Item>
+			<Item>
+				<rasd:Address>0</rasd:Address>
+				<rasd:ElementName>Controladora SATA</rasd:ElementName>
+				<rasd:InstanceID>3</rasd:InstanceID>
+				<rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
+				<rasd:ResourceType>20</rasd:ResourceType>
+			</Item>
+			<Item>
+				<rasd:AddressOnParent>0</rasd:AddressOnParent>
+				<rasd:ElementName>/dev/hda</rasd:ElementName>
+				<rasd:HostResource>ovf:/disk/hda</rasd:HostResource>
+				<rasd:InstanceID>4</rasd:InstanceID>
+				<rasd:Parent>3</rasd:Parent>
+				<rasd:ResourceType>17</rasd:ResourceType>
+			</Item>
+			<Item>
+				<rasd:AddressOnParent>2</rasd:AddressOnParent>
+				<rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+				<rasd:Connection>nat</rasd:Connection>
+				<rasd:ElementName>eth0</rasd:ElementName>
+				<rasd:InstanceID>5</rasd:InstanceID>
+				<rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+				<rasd:ResourceType>10</rasd:ResourceType>
+			</Item>
+		</VirtualHardwareSection>
+	</VirtualSystem>
+</Envelope>
