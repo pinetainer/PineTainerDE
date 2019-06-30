@@ -144,8 +144,12 @@ existeMV() {
 
 # Importa una máquina virtual en formato OVA u OVF a VirtualBox
 importarMV() {
+    # Eliminar espacios del nombre que nos pasen como parámetro, pues GitHub Releases no soporta nombres
+    # con espacios
+    nombreFicheroReal=$(echo "$1" | tr -d ' ')
+
     if [ -n "$modoInteractivo" ]; then
-        VBoxManage import "$1" 3<&2 2<&1 1<&3 3>/dev/null | stdbuf -o0 awk -Winteractive '
+        VBoxManage import "$nombreFicheroReal" 3<&2 2<&1 1<&3 3>/dev/null | stdbuf -o0 awk -Winteractive '
             # Usar el punto como separador de registros
             BEGIN {
                 RS="."
@@ -164,8 +168,8 @@ importarMV() {
             }' \
         2>/dev/null | "$dialog" --backtitle "$nombreArtefacto" --title 'Importando máquina virtual' --gauge "Importando la máquina virtual a VirtualBox... Esto puede tardar un rato." 8 64 0
     else
-        echo "> Importando $1 a VirtualBox... Esto puede tardar un rato."
-        VBoxManage import "$1"
+        echo "> Importando $nombreFicheroReal a VirtualBox... Esto puede tardar un rato."
+        VBoxManage import "$nombreFicheroReal"
     fi
 
     # Devolver éxito si una MV con el nombre esperado existe

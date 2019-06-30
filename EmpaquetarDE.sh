@@ -3,7 +3,7 @@
 # ########## #
 # CONSTANTES #
 # ########## #
-readonly nombreOVF='PineTainer DE'
+readonly nombreOVF='PineTainerDE'
 
 # ######### #
 # FUNCIONES #
