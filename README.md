@@ -59,5 +59,24 @@ $ wget -q -O - "https://raw.githubusercontent.com/pinetainer/PineTainerDE/master
 
 El script de instalación acepta parámetros en la línea de comandos que influyen en su funcionamiento. Por ejemplo, por defecto el proceso de instalación es interactivo y utiliza `dialog` o `whiptail` si están disponibles, pero esto se puede evitar con la opción `-b`, haciéndolo más ameno a la interacción con otros scripts. La opción `-h` describe todas las opciones aceptadas y sus efectos.
 
+#### Un curioso error al importar PineTainer DE a VirtualBox
+Al importar la máquina virtual en versiones actuales de VirtualBox, `VBoxManage` siempre termina mostrando un error similar al siguiente, deteniendo el proceso y señalando un fallo al script de instalación:
+
+```
+Progress state: VBOX_E_OBJECT_NOT_FOUND
+VBoxManage: error: Appliance import failed
+VBoxManage: error: Error opening '/tmp/PineTainer/PineTainerDE-hda.vmdk.gz' for reading (VERR_FILE_NOT_FOUND)
+VBoxManage: error: Details: code VBOX_E_OBJECT_NOT_FOUND (0x80bb0001), component ApplianceWrap, interface IAppliance
+VBoxManage error: Context: "enum RTEXITCODE __cdecl handleImportAppliance(struct HandlerArg *)" at line 957 of file VBoxManageAppliance.cpp
+```
+
+Para posibilitar la distribución de la máquina virtual, ya que GitHub limita los archivos subidos a las publicaciones a algo menos de 2 GiB, y ser más compatibles con sistemas de ficheros como FAT, es necesario dividir sus imágenes de disco en varios ficheros, puesto que ocupan más de 2 GiB. Por suerte, el estándar OVF 1.0 permite dividir las imágenes, y especifica completamente cómo debe de proceder el hipervisor:
+
+> Files referenced from the reference part may be split into chunks to accommodate file size restrictions on certain file systems. Chunking shall be indicated by the presence of the ovf:chunkSize attribute; the value of ovf:chunkSize shall be the size of each chunk, except the last chunk, which may be smaller. When ovf:chunkSize is specified, the File element shall reference a chunk file representing a chunk of the entire file. In this case, the value of the ovf:href attribute specifies only a part of the URL and the syntax for the URL resolving to the chunk file is given below. [...]
+
+Sin embargo, [VirtualBox no implementa hoy por hoy la lógica necesaria para reconocer ficheros fragmentados](https://www.virtualbox.org/browser/vbox/trunk/src/VBox/Main/xml/ovfreader.cpp#L266), por lo que termina interpretando que un nombre de fichero sin los sufijos que indican su número de fragmento (.XXXXXXXXX) debe de existir. Naturalmente, tal fichero no existe, pues solo se distribuyen sus fragmentos, por lo que la ejecución se aborta con un error.
+
+Aunque la solución trivial a este error es concatenar los fragmentos en orden con `cat` para obtener el fichero completo, hacerlo en el script de instalación sería extremadamente poco elegante, y neutralizaría los beneficios del manifiesto OVF, que permite detectar errores en la descarga. Por tanto, desde un punto de vista de mantenibilidad de este repositorio, no es una solución recomendable. La buena solución sería que VirtualBox implementase completamente el estándar, para lo que seguramente algún valiente tenga que enviar un parche que añada el soporte necesario para una funcionalidad que lleva 10 años especificada. Viva el código abierto.
+
 ### Distribuir PineTainer DE
 Generar los ficheros de _PineTainer Development Environment_ para su distribución es un proceso simple, automatizado en parte por el script `EmpaquetarDE.sh`. Este script parte de un esqueleto del descriptor OVF de la máquina virtual situado en `ova/skel` y de las imágenes de sus discos, que convierte con `qemu-img`, `gzip` y `split` a un formato apropiado para su distribución. También genera el descriptor OVF final, crea un manifiesto con sumas de comprobación SHA1 y, opcionalmente, empaqueta todos los ficheros generados en un contenedor OVA (que no es más que un fichero USTAR). `EmpaquetarDE.sh` es un script interactivo, que pide datos al usuario mediante la entrada estándar y muestra información en la salida estándar, así que usarlo es intuitivo y no requiere mayores explicaciones.
