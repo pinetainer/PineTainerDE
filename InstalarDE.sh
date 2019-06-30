@@ -5,8 +5,7 @@
 # ########## #
 readonly nombreArtefacto='PineTainer Development Environment'
 readonly nombreMV='PineTainer DE'
-readonly urlMV='https://github.com/pinetainer/PineTainerDE/releases/latest/download'
-readonly ovaMV="$nombreMV.ova"
+readonly repositorioMV='pinetainer/PineTainerDE'
 readonly fichRespuestaTemporal=/tmp/.pinetainer_answer
 readonly dirDescargaPredeterminado=/tmp/PineTainer
 
@@ -27,7 +26,7 @@ comprobarRequisito() {
 
 # Comprueba que el sistema tenga todos los programas necesarios
 comprobarRequisitos() {
-    { comprobarRequisito 'which' && comprobarRequisito 'wget' && comprobarRequisito 'awk' && comprobarRequisito 'VBoxManage'; } || exit $?
+    { comprobarRequisito 'which' && comprobarRequisito 'wget' && comprobarRequisito 'awk' && comprobarRequisito 'sed' && comprobarRequisito 'VBoxManage'; } || exit $?
 
     # Si stdbuf no está disponible, implementarlo como un "stub" que ejecuta su línea de comandos, ignorando el primer argumento
     comprobarRequisito 'stdbuf'
@@ -113,6 +112,28 @@ descargarFichero() {
     fi
 
     return $codigoSalida
+}
+
+# Contacta la API de GitHub para obtener la lista de ficheros de la máquina virtual a descargar, y los descarga uno a uno.
+# En caso de error, esta función no devuelve el control a quien la llama
+descargarFicherosMV() {
+    datosFicherosMV=$(wget -q -O - "https://api.github.com/repos/$repositorioMV/releases/latest")
+
+    if [ $? -eq 0 ]; then
+        # Interpretamos el JSON devuelto por la API para quedarnos con los URL de descarga
+        urlFicheros=$(echo "$datosFicherosMV" | sed -n '/^ *"browser_download_url": *"..*" *$/{s/.*: *"//;s/" *$//;p}')
+
+        # Como los ficheros no van a tener saltos de línea en su nombre, establecer el separador de campos al salto de línea es lo más seguro
+        IFS='
+'
+        for url in $urlFicheros; do
+            unset IFS
+            descargarFichero "$url" || mostrarErrorYSalir "Ha ocurrido un error al descargar $url, o se ha interrumpido la operación. El entorno de desarrollo no fue configurado."
+        fi
+        unset IFS
+    else
+        mostrarErrorYSalir "Ha ocurrido un error al contactar a la API de GitHub para obtener los ficheros de $nombreArtefacto a descargar."
+    fi
 }
 
 # Comprueba si una determinada MV existe en VirtualBox
@@ -314,8 +335,8 @@ fi
 # Obtener el directorio de descarga a usar, y descargar en él la MV para importarla
 obtenerDirectorioDescarga
 if [ $? -eq 0 ]; then
-    descargarFichero "$urlMV/$ovaMV" || mostrarErrorYSalir "Ha ocurrido un error al descargar los ficheros de $nombreArtefacto, o se ha interrumpido la operación. El entorno de desarrollo no fue configurado."
-    importarMV "$dirDescarga/$ovaMV" || mostrarErrorYSalir "Ha ocurrido un error al importar la máquina virtual a VirtualBox, o se ha interrumpido la operación. El entorno de desarrollo no fue configurado."
+    descargarFicherosMV
+    importarMV "$dirDescarga/$nombreMV.ovf" || mostrarErrorYSalir "Ha ocurrido un error al importar la máquina virtual a VirtualBox, o se ha interrumpido la operación. El entorno de desarrollo no fue configurado."
     establecerParametrosMV "$nombreMV" || mostrarMensaje "No se han podido establecer algunos parámetros adicionales de la máquina virtual. Su funcionamiento podría no ser óptimo."
     configurarCarpetaCompartidaMV "$nombreMV" "PineTainer" || mostrarMensaje "Ha ocurrido un error configurando las carpetas compartidas de la máquina virtual. Por favor, hazlo manualmente."
     arrancarMV "$nombreMV" || mostrarMensaje "No se ha podido arrancar la máquina virtual. Por favor, hazlo desde VirtualBox, o vuelve a ejecutar este script si eso no es posible."
