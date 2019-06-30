@@ -53,7 +53,9 @@ Si el sistema tiene un shell POSIX (porque usa Linux, una variante de Unix, _Win
 
 Para que el script funcione se necesita, aparte de `VBoxManage` (incluido en VirtualBox) y el propio shell, `wget` y algunas herramientas más, que deberían de estar disponibles en la inmensa mayoría de sistemas (aunque si no lo están el script avisará de ello antes de hacer nada). Con las dependencias necesarias instaladas, iniciar el proceso de instalación se puede resumir en un simple comando:
 
-`$ wget -q -O - "https://raw.githubusercontent.com/pinetainer/PineTainerDE/master/InstalarDE.sh" | sh`
+```Shell session
+$ wget -q -O - "https://raw.githubusercontent.com/pinetainer/PineTainerDE/master/InstalarDE.sh" | sh
+```
 
 El script de instalación acepta parámetros en la línea de comandos que influyen en su funcionamiento. Por ejemplo, por defecto el proceso de instalación es interactivo y utiliza `dialog` o `whiptail` si están disponibles, pero esto se puede evitar con la opción `-b`, haciéndolo más ameno a la interacción con otros scripts. La opción `-h` describe todas las opciones aceptadas y sus efectos.
 
