@@ -129,7 +129,7 @@ descargarFicherosMV() {
         for url in $urlFicheros; do
             unset IFS
             descargarFichero "$url" || mostrarErrorYSalir "Ha ocurrido un error al descargar $url, o se ha interrumpido la operación. El entorno de desarrollo no fue configurado."
-        fi
+        done
         unset IFS
     else
         mostrarErrorYSalir "Ha ocurrido un error al contactar a la API de GitHub para obtener los ficheros de $nombreArtefacto a descargar."
@@ -318,7 +318,7 @@ while getopts 'hbfd:' opcion; do
            echo "Sintaxis: $0 [-hbf] [-d DIRECTORIO_DESCARGA]"
            echo
            echo "-h: muestra este mensaje de ayuda."
-           echo "-b: activa el modo de procesamiento por lotes. En este modo el script siempre obtendrá parámetros desde entrada textual, y no desde una interfaz gráfica."
+           echo "-b: activa el modo de procesamiento por lotes. En este modo el script siempre obtendrá parámetros leyendo directamente desde la entrada estándar, y no desde una interfaz gráfica."
            echo "-f: no le pide confirmación al usuario para realizar ciertas acciones, asumiendo que acepta siempre. Usar con precaución."
            echo "-d DIRECTORIO_DESCARGA: el directorio de descarga donde guardar archivos temporales de la máquina virtual."
            exit;;
