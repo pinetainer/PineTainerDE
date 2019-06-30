@@ -34,7 +34,7 @@
 			<Vendor>PineTainer</Vendor>
 			<Version>1.0</Version>
 			<ProductUrl>https://github.com/pinetainer/PineTainerDE</ProductUrl>
-			<VendorUrl>hhttps://github.com/pinetainer</VendorUrl>
+			<VendorUrl>https://github.com/pinetainer</VendorUrl>
 		</ProductSection>
 		<OperatingSystemSection ovf:id="96" ovf:version="9">
 			<Info>Debian 9.x 64-bit</Info>
