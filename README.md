@@ -1,6 +1,8 @@
 # PineTainer DE
 _PineTainer Development Environment_ es una máquina virtual preconfigurada para el desarrollo del sistema de ficheros raíz usado en la placa de PineTainer, mediante Buildroot.
 
+## Este entorno es altamente propicio a cambios, y su uso no está soportado por el trabajo que conlleva actualizarlo. No obstante, puede servir como referencia general de qué herramientas de desarrollo hacen falta para trabajar con PineTainer.
+
 En este repositorio se encuentran los scripts shell POSIX utilizados para la generación automática del Development Environment a partir de una máquina virtual ya existente, así como los scripts de instalación y configuración automática para el usuario final.
 
 ### Descripción de PineTainer DE
